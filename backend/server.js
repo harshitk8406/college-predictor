@@ -6,10 +6,17 @@ const path = require("path");
 
 const predictRoute = require("./routes/predict");
 const metaRoute = require("./routes/meta");
+const Cutoff = require("./models/Cutoff");
+const expandCutoffs = require("./seed/expandCutoffs");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/college_predictor";
+
+// Startup diagnostic
+console.log("[startup] NODE_ENV:", process.env.NODE_ENV);
+console.log("[startup] MONGO_URI set:", !!process.env.MONGO_URI);
+console.log("[startup] MONGO_URI starts with:", (process.env.MONGO_URI || "").slice(0, 25) || "(fallback — localhost)");
 
 app.use(cors());
 app.use(express.json());
@@ -29,11 +36,28 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+/**
+ * Auto-seed: if the cutoffs collection is empty, populate it.
+ * Runs once per cold start — safe to leave in permanently.
+ */
+async function autoSeedIfEmpty() {
+  const count = await Cutoff.countDocuments();
+  if (count === 0) {
+    console.log("[seed] Collection is empty — seeding now...");
+    const docs = expandCutoffs();
+    await Cutoff.insertMany(docs);
+    console.log(`[seed] Inserted ${docs.length} cutoff records.`);
+  } else {
+    console.log(`[seed] Collection already has ${count} records — skipping seed.`);
+  }
+}
+
 mongoose
   .connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("Connected to MongoDB");
-    app.listen(PORT, () => console.log(`API listening on http://localhost:${PORT}`));
+    await autoSeedIfEmpty();
+    app.listen(PORT, () => console.log(`API listening on port ${PORT}`));
   })
   .catch(err => {
     console.error("MongoDB connection failed:", err.message);
