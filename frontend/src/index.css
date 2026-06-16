@@ -1,0 +1,553 @@
+/* =============================================================================
+   DESIGN TOKENS
+   Subject: Indian competitive-exam admissions (JEE/BITSAT). The visual world
+   here is rank cards, scorecards, and merit certificates — so the palette
+   leans on ink + brass (academic seals, "topper" gold) with a muted teal/
+   coral pair for status, rather than a generic SaaS dashboard look.
+============================================================================= */
+:root {
+  --ink-900: #11152a;
+  --ink-800: #181e3c;
+  --ink-700: #232a4d;
+  --paper: #f1ead9;
+  --paper-dim: #e3dac4;
+  --brass: #c99a3c;
+  --brass-soft: #e2bc70;
+  --teal: #2f8f82;
+  --teal-deep: #1f6b61;
+  --coral: #bd6049;
+  --coral-deep: #954a38;
+  --ink-text: #181a26;
+  --off-white: #f5f2e9;
+  --muted: #aab0cf;
+  --line: rgba(245, 242, 233, 0.14);
+  --line-strong: rgba(245, 242, 233, 0.26);
+  --line-on-paper: rgba(24, 26, 38, 0.14);
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", monospace;
+
+  --radius: 10px;
+  --max-width: 880px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(ellipse at top, #161b36 0%, var(--ink-900) 55%);
+  color: var(--off-white);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+button, input, select, textarea { font-family: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--brass-soft);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* =============================================================================
+   LAYOUT
+============================================================================= */
+.app-shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+
+.masthead {
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 28px;
+}
+
+.masthead .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-soft);
+  margin: 0 0 10px;
+}
+
+.masthead h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 5vw, 3rem);
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+}
+
+.masthead p {
+  color: var(--muted);
+  max-width: 56ch;
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+/* =============================================================================
+   FORM — styled like a sequential application form / ledger
+============================================================================= */
+.form-section {
+  border-top: 1px solid var(--line);
+  padding: 32px 0;
+}
+.form-section:first-of-type { border-top: none; padding-top: 0; }
+
+.section-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-900);
+  background: var(--brass-soft);
+  border-radius: 4px;
+  padding: 2px 7px;
+  letter-spacing: 0.02em;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.section-hint {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: -10px 0 20px 0;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 20px;
+}
+
+@media (max-width: 620px) {
+  .field-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Other exam picker ─────────────────────────────────────────────────── */
+.other-exam-group {
+  margin-top: 22px;
+  background: rgba(35, 42, 77, 0.55);
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 16px 18px 18px;
+}
+
+.other-exam-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.other-exam-label {
+  font-size: 0.86rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.other-exam-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  opacity: 0.65;
+}
+
+.other-exam-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 14px;
+  align-items: end;
+}
+
+@media (max-width: 580px) {
+  .other-exam-row { grid-template-columns: 1fr; }
+}
+
+.other-exam-select select,
+.other-exam-score input {
+  width: 100%;
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.field .optional-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  opacity: 0.75;
+  margin-left: 6px;
+}
+
+.field .field-sub-hint {
+  font-size: 0.7rem;
+  color: var(--brass-soft);
+  opacity: 0.8;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+.field input,
+.field select {
+  background: var(--ink-700);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--off-white);
+  padding: 11px 13px;
+  font-size: 0.98rem;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s ease;
+}
+
+.field select { font-family: var(--font-body); }
+
+.field input::placeholder { color: #5d6390; }
+
+.field input:focus, .field select:focus {
+  border-color: var(--brass-soft);
+}
+
+.field input:invalid:not(:placeholder-shown) {
+  border-color: var(--coral);
+}
+
+/* Preference toggle — the explicit "college vs branch" question */
+.toggle-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toggle-card {
+  flex: 1;
+  min-width: 220px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 18px 18px;
+  cursor: pointer;
+  background: var(--ink-700);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.toggle-card.active {
+  border-color: var(--brass);
+  background: linear-gradient(160deg, rgba(201, 154, 60, 0.16), rgba(201, 154, 60, 0.04));
+}
+
+.toggle-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  margin: 0 0 6px;
+}
+
+.toggle-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.toggle-card .radio-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+.toggle-card.active .radio-dot {
+  border-color: var(--brass);
+  background: radial-gradient(var(--brass) 0 40%, transparent 42%);
+}
+
+.branch-picker {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.branch-chip {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.86rem;
+  cursor: pointer;
+  background: var(--ink-700);
+  color: var(--off-white);
+  transition: all 0.15s ease;
+}
+
+.branch-chip.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--ink-900);
+  font-weight: 500;
+}
+
+/* =============================================================================
+   SUBMIT + STATES
+============================================================================= */
+.submit-row {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: var(--brass);
+  color: var(--ink-900);
+  border: none;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.btn-primary:hover { background: var(--brass-soft); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.error-banner {
+  border: 1px solid var(--coral);
+  background: rgba(189, 96, 73, 0.12);
+  color: var(--off-white);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.92rem;
+  margin-top: 18px;
+}
+
+.error-banner ul { margin: 6px 0 0; padding-left: 18px; }
+
+.disclaimer-banner {
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 18px;
+}
+
+/* =============================================================================
+   RESULTS — "rank card" grid, paper surface against the ink background
+============================================================================= */
+.results-section {
+  margin-top: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 40px;
+}
+
+.results-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.results-heading h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.results-heading .results-meta {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 700px) {
+  .results-grid { grid-template-columns: 1fr; }
+}
+
+.result-card {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink-text);
+  border-radius: var(--radius);
+  padding: 22px 22px 20px;
+  overflow: hidden;
+  animation: card-in 0.32s ease both;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.result-card .college-type {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+}
+
+.result-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  margin: 4px 0 2px;
+  padding-right: 86px;
+}
+
+.result-card .branch-name {
+  font-size: 0.88rem;
+  color: #4a4a3f;
+  margin: 0 0 14px;
+  padding-right: 86px;
+}
+
+.result-card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  margin: 0;
+  border-top: 1px solid var(--line-on-paper);
+  padding-top: 12px;
+}
+
+.result-card dt {
+  font-size: 0.74rem;
+  color: #6b6b5c;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.result-card dd {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  margin: 0;
+}
+
+/* The signature element: a rotated ink-stamp badge marking Safe/Moderate/Ambitious */
+.stamp {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transform: rotate(-9deg);
+  border: 2px solid currentColor;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  padding: 4px;
+}
+
+.stamp::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px dotted currentColor;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.stamp.Safe { color: var(--teal-deep); }
+.stamp.Moderate { color: var(--brass); }
+.stamp.Ambitious { color: var(--coral-deep); }
+
+.empty-state {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 24px;
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--brass);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer.app-footer {
+  margin-top: 72px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
